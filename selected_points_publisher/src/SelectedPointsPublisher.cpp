@@ -48,7 +48,7 @@ void SelectedPointsPublisher::updateTopic()
 {
     nh_.param("frame_id", tf_frame_, std::string("/base_link"));
     std::string cloud_topic;
-    nh_.param("source_cloud_topic", cloud_topic, std::string("/camera/depth_registered/points"));
+    nh_.param("source_cloud_topic", cloud_topic, std::string("/velodyne_points"));
     rviz_cloud_topic_ = std::string("/rviz_selected_points");
     real_cloud_topic_ = std::string("/real_selected_points");
     subs_cloud_topic_ = cloud_topic;
@@ -208,8 +208,10 @@ int SelectedPointsPublisher::_processSelectedAreaAndFindPoints()
     rviz::SelectionManager* sel_manager = context_->getSelectionManager();
     rviz::M_Picked selection = sel_manager->getSelection();
     rviz::PropertyTreeModel *model = sel_manager->getPropertyModel();
-    int num_points = model->rowCount();
-    ROS_INFO_STREAM_NAMED( "SelectedPointsPublisher._processSelectedAreaAndFindPoints", "Number of points in the selected area: " << num_points);
+
+    ROS_INFO_STREAM_NAMED( "SelectedPointsPublisher._processSelectedAreaAndFindPoints", "getting rowCount()");
+    int num_points = model->columnCount();
+    ROS_INFO_STREAM_NAMED( "SelectedPointsPublisher._processSelectedAreaAndFindPoints", "Number of points in the selected area: " << num_points << "," << selection.size());
 
     // Generate a ros point cloud message with the selected points in rviz
     sensor_msgs::PointCloud2 selected_points_ros;
